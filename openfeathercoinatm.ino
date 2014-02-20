@@ -191,7 +191,7 @@ getNextBitcoin
 
 ******************************************************/
 
-int getNextBitcoin(){
+void getNextBitcoin(){
     
   int BTCNumber = 0, i = 0;
  // long counter = 0;
