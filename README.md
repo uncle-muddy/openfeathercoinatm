@@ -1,7 +1,7 @@
 openfeathercoinatm
 ==============
 
-Open Feathercoin ATM -- The worlds first completely open-source Feathercoin ATM, based on Mayo Smith's OpenBitcoinATM.
+Open Feathercoin ATM -- The worlds first completely open-source Feathercoin ATM, based on John Mayo Smith's OpenBitcoinATM.
 
 See the OpenBitcoinATM in action here: http://youtu.be/A4KvAgJx4GU
 
