@@ -68,20 +68,20 @@
  byte cLastChar; //for streaming from SD card
  char cHexBuf[3]; //for streaming from SD card
  
- const int DOLLAR_PULSE = 4; //pulses per dollar
+ const int POUND_PULSE = 4; //pulses per pound
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
- const int MAX_BITCOINS = 10; //max btc per SD card
+ const int MAX_KEYS = 10; //max keys per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
- #define SET_RTCLOCK      1 // Set to true to set Bitcoin transaction log clock to program compile time.
- #define TEST_MODE        1 // Set to true to not delete private keys (prints the same private key for each dollar).
+ #define SET_RTCLOCK      1 // Set to true to set FTC transaction log clock to program compile time.
+ #define TEST_MODE        1 // Set to true to not delete private keys (prints the same private key for each pound).
  
  #define DOUBLE_HEIGHT_MASK (1 << 4) //size of pixels
  #define DOUBLE_WIDTH_MASK  (1 << 5) //size of pixels
  
  RTC_DS1307 RTC; // define the Real Time Clock object
 
- char LOG_FILE[] = "btclog.txt"; //name of Bitcoin transaction log file
+ char LOG_FILE[] = "ftclog.txt"; //name of FTC transaction log file
  
  const int chipSelect = 10; //SD module
  
@@ -105,7 +105,7 @@
 void setup(){
   Serial.begin(57600); //baud rate for serial monitor
   attachInterrupt(0, onPulse, RISING); //interupt for Apex bill acceptor pulse detect
-  pinMode(2, INPUT); //for Apex bill acceptor pulse detect 
+  pinMode(2, INPUT); //for coin acceptor pulse detect 
   pinMode(10, OUTPUT); //Slave Select Pin #10 on Uno
   
   if (!SD.begin(chipSelect)) {    
@@ -157,8 +157,8 @@ void loop(){
     if((millis() - pulseTime) < PULSE_TIMEOUT) 
       return;
  
-     if(pulseCount == DOLLAR_PULSE)
-       getNextBitcoin(); //dollar baby!
+     if(pulseCount == POUND_PULSE)
+       getNextkey(); //vend baby!
        
      //----------------------------------------------------------
      // Add additional currency denomination logic here: $5, $10, $20      
@@ -171,8 +171,8 @@ void loop(){
 
 /*****************************************************
 onPulse
-- read 50ms pulses from Apex Bill Acceptor.
-- 4 pulses indicates one dollar accepted
+- read 50ms pulses from coin Acceptor.
+- 4 pulses indicates one pound accepted
 
 ******************************************************/
 void onPulse(){
@@ -186,14 +186,14 @@ if(val == HIGH)
 }
 
 /*****************************************************
-getNextBitcoin
-- Read next bitcoin QR Code from SD Card
+getNextkey
+- Read next FTC QR Code from SD Card
 
 ******************************************************/
 
-void getNextBitcoin(){
+void getNextkey(){
     
-  int BTCNumber = 0, i = 0;
+  int keyNumber = 0, i = 0;
  // long counter = 0;
  char cBuf, cPrev;
   
@@ -201,14 +201,14 @@ void getNextBitcoin(){
        
     Serial.println("card initialized.");
  
-    while(BTCNumber<MAX_BITCOINS){
+    while(keyNumber<MAX_KEYS){
       
          //prepend file name
-         String temp = "BTC_";
+         String temp = "FTC_";
          //add file number
-         temp.concat(BTCNumber);
+         temp.concat(keyNumber);
          //append extension
-         temp.concat(".btc"); 
+         temp.concat(".ftc"); 
          
          //char array
          char filename[temp.length()+1];   
@@ -220,8 +220,8 @@ void getNextBitcoin(){
              Serial.println(filename);
              
              //print logo at top of paper
-             if(SD.exists("logo.oba")){
-               printBitmap("logo.oba"); 
+             if(SD.exists("logo.ofa")){
+               printBitmap("logo.ofa"); 
              }  
              
                //----------------------------------------------------------
@@ -235,11 +235,11 @@ void getNextBitcoin(){
                //print QR code off the SD card
                printBitmap(filename); 
 
-               printer->println("Official Bitcoin Currency.");
+               printer->println("Official Feathercoin Currency.");
 
                printer->println("Keep secure.");
 
-               printer->println("OpenBitcoinATM.org");
+               printer->println("www.feathercoin.com");
                
                printer->println(" ");
                printer->println(" ");
@@ -247,10 +247,10 @@ void getNextBitcoin(){
                printer->println(" ");
 
 
-          break; //stop looking, bitcoin file found
+          break; //stop looking, key file found
          }  
           else{
-            if (BTCNumber >= MAX_BITCOINS -1){
+            if (keyNumber >= MAX_KEYS -1){
               
                 //----------------------------------------------------------
                 // Disable bill acceptor when bitcoins run out 
@@ -262,7 +262,7 @@ void getNextBitcoin(){
              Serial.println(filename);        
         }
     //increment bitcoin number
-    BTCNumber++;
+    keyNumber++;
     }
 }  
 
@@ -370,7 +370,7 @@ void printBitmap(char *filename){
 
 /*****************************************************
 updateLog()
-Updates Bitcoin transaction log stored on SD Card
+Updates FTC transaction log stored on SD Card
 Logfile name = LOG_FILE
 
 ******************************************************/
