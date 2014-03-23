@@ -1,6 +1,6 @@
 //*************************************************************************
  OpenFeathercoinATM
- (ver. 1.0.5)
+ (ver. 1.0.6)
  
  OpenFeathercoinATM is the Feathercoin implementation of the OpenBitcoinATM
  Arduino program, adapetd by Stefan Pynappels.
@@ -73,7 +73,7 @@
  
  const int POUND_PULSE = 4; //pulses per pound
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
- const int MAX_KEYS = 5; //max keys per SD card
+ const int MAX_KEYS = 2; //max keys per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set FTC transaction log clock to program compile time.
@@ -90,7 +90,7 @@
  
  int printer_RX_Pin = 5;  // This is the green wire
  int printer_TX_Pin = 6;  // This is the yellow wire
- 
+ int relayPin = 7; // Set coin taker relay pin
  char printDensity = 14; // 15; //text darkening
  char printBreakTime = 4; //15; //text darkening
 
@@ -112,7 +112,7 @@ void setup(){
   attachInterrupt(0, onPulse, RISING); //interupt for Apex bill acceptor pulse detect
   pinMode(2, INPUT); //for coin acceptor pulse detect 
   pinMode(10, OUTPUT); //Slave Select Pin #10 on Uno
-  pinMode(3, OUTPUT); //for coin acceptor relay control 
+  pinMode(relayPin, OUTPUT); //for coin acceptor relay control 
   
   if (!SD.begin(chipSelect)) {    
       Serial.println("card failed or not present");
@@ -276,7 +276,7 @@ void getNextkey(){
                 // Disable coin acceptor when feathercoins run out 
                 // Send pin 3 high, to control relay
                 //----------------------------------------------------------
-               digitalWrite(3, HIGH);
+               digitalWrite(relayPin, HIGH);
                Serial.print("I've run out of QR Codes!");
             }  
              Serial.print("file does not exist: ");
