@@ -1,0 +1,25 @@
+Item	Value           
+
+D1	1.5KE12A 200A Unidirectional Transient Voltage Suppressor Diode
+J1  	Printer Power
+	Pin 1 - +5v
+	Pin 2 - GND
+J2  	Printer Signal
+	Pin 1 - GND
+	Pin 2 - Data TX (Yellow)
+	Pin 3 - Data RX (Green)
+J3  	Power In
+	Pin 1 - +12v
+	Pin 2 - GND
+	Pin 3 - GND
+	Pin 4 - +5v
+P1  	Arduino +5vin
+P2  	Arduino GND
+P3  	Arduino Pin 6
+P4  	Arduino Pin 5
+P5	0v Coin Taker (Black)
+P6	Coin Taker Pulse (White)
+P7  	Arduino Pin 2
+P8  	Arduino Pin 7
+P9	+12v Coin Taker (Red)
+Relay1  LU-5 Relay
