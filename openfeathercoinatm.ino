@@ -1,61 +1,4 @@
-//*************************************************************************
- OpenFeathercoinATM
- (ver. 1.0.0)
- 
- OpenFeathercoinATM is the Feathercoin implementation of the OpenBitcoinATM
- Arduino program, adapetd by Stefan Pynappels.
- 
- Thanks to John Mayo-Smith for the solid base to start from!
-    
- MIT Licence (MIT)
- Copyright (c) 1997 - 2014 John Mayo-Smith for Federal Digital Coin Corporation
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
-
-  OpenBitcoinATM is the first open-source Bitcoin automated teller machine for
- experimentation and education. 
-  
- This application, counts pulses from a Pyramid Technologies Apex 5000
- series bill acceptor and interfaces with the Adafruit 597 TTL serial Mini Thermal 
- Receipt Printer.
-
-
-  References
-  -----------
-  Stefan Pynappels: https://github.com/spynappels
-  
-  John Mayo-Smith: https://github.com/mayosmith
-  
-  Here's the A2 Micro panel thermal printer --> http://www.adafruit.com/products/597
-  
-  Here's the bill accceptor --> APEX 5400 on eBay http://bit.ly/MpETED
-  
-  Peter Kropf: https://github.com/pkropf/greenbacks
-  
-  Thomas Mayo-Smith:http://www.linkedin.com/pub/thomas-mayo-smith/63/497/a57
-
-
-
- *************************************************************************/
-
-
- #include <SoftwareSerial.h>
+#include <SoftwareSerial.h>
  #include <Wire.h>
  #include "RTClib.h"
  #include <SPI.h>
@@ -74,7 +17,7 @@
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set FTC transaction log clock to program compile time.
- #define TEST_MODE        1 // Set to true to not delete private keys (prints the same private key for each pound).
+ #define TEST_MODE        0 // Set to true to not delete private keys (prints the same private key for each pound).
  
  #define DOUBLE_HEIGHT_MASK (1 << 4) //size of pixels
  #define DOUBLE_WIDTH_MASK  (1 << 5) //size of pixels
@@ -221,7 +164,7 @@ void getNextkey(){
              
              //print logo at top of paper
              if(SD.exists("logo.ofa")){
-               printBitmap("logo.ofa"); 
+               printBitmap("logo.ofa", false); 
              }  
              
                //----------------------------------------------------------
@@ -229,15 +172,15 @@ void getNextkey(){
                // May be removed during volitile Bitcoin market periods
                //----------------------------------------------------------
              
-               ///printer->println("Value .002 BTC");
+               printer->println("Value 1 FTC");
 
              
                //print QR code off the SD card
-               printBitmap(filename); 
+               printBitmap(filename, true); 
 
-               printer->println("Official Feathercoin Currency.");
+               printer->println("Official Feathercoin Currency");
 
-               printer->println("Keep secure.");
+               printer->println("Keep Secure");
 
                printer->println("www.feathercoin.com");
                
@@ -274,7 +217,7 @@ width of bitmap should be byte aligned -- evenly divisable by 8
 
 
 ******************************************************/
-void printBitmap(char *filename){
+void printBitmap(char *filename, bool shouldDelete){
   int nBytes = 0;
   int iBitmapWidth = 0 ;
   int iBitmapHeight = 0 ;
@@ -350,10 +293,11 @@ void printBitmap(char *filename){
     Serial.println("file closed");
 
     
-   #if !TEST_MODE
-  //delete the QR code file after it is printed
-     SD.remove(filename);
-   #endif 
+   //delete the QR code file after it is printed
+     if(shouldDelete){
+      SD.remove(filename);
+      updateLog();
+   } 
  
  
    // update transaction log file
@@ -366,7 +310,6 @@ void printBitmap(char *filename){
   return;
   
 }
-
 
 /*****************************************************
 updateLog()
@@ -381,7 +324,7 @@ void updateLog(){
       now=RTC.now();
       
       logfile = SD.open(LOG_FILE, FILE_WRITE); 
-      logfile.print("Bitcoin Transaction ");
+      logfile.print("Feathercoin Transaction ");
       logfile.print(now.unixtime()); // seconds since 1/1/1970
       logfile.print(",");
       logfile.print(now.year(), DEC);
