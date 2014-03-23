@@ -1,5 +1,6 @@
 //*************************************************************************
-OpenFeathercoinATM (ver. 1.0.4)
+ OpenFeathercoinATM
+ (ver. 1.0.5)
  
  OpenFeathercoinATM is the Feathercoin implementation of the OpenBitcoinATM
  Arduino program, adapetd by Stefan Pynappels.
@@ -56,6 +57,7 @@ OpenFeathercoinATM (ver. 1.0.4)
  *************************************************************************/
  
  
+ 
  #include <SoftwareSerial.h>
  #include <Wire.h>
  #include "RTClib.h"
@@ -71,7 +73,7 @@ OpenFeathercoinATM (ver. 1.0.4)
  
  const int POUND_PULSE = 4; //pulses per pound
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
- const int MAX_KEYS = 2; //max keys per SD card
+ const int MAX_KEYS = 5; //max keys per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set FTC transaction log clock to program compile time.
@@ -268,13 +270,14 @@ void getNextkey(){
           break; //stop looking, key file found
          }  
           else{
-            if (keyNumber >= MAX_KEYS -1){
+            if (keyNumber <= MAX_KEYS -1){
               
                 //----------------------------------------------------------
                 // Disable coin acceptor when feathercoins run out 
                 // Send pin 3 high, to control relay
                 //----------------------------------------------------------
                digitalWrite(3, HIGH);
+               Serial.print("I've run out of QR Codes!");
             }  
              Serial.print("file does not exist: ");
              Serial.println(filename);        
