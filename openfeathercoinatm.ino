@@ -1,6 +1,5 @@
- //*************************************************************************
- OpenFeathercoinATM
- (ver. 1.0.3)
+//*************************************************************************
+OpenFeathercoinATM (ver. 1.0.4)
  
  OpenFeathercoinATM is the Feathercoin implementation of the OpenBitcoinATM
  Arduino program, adapetd by Stefan Pynappels.
@@ -72,7 +71,7 @@
  
  const int POUND_PULSE = 4; //pulses per pound
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
- const int MAX_KEYS = 10; //max keys per SD card
+ const int MAX_KEYS = 2; //max keys per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set FTC transaction log clock to program compile time.
@@ -111,6 +110,7 @@ void setup(){
   attachInterrupt(0, onPulse, RISING); //interupt for Apex bill acceptor pulse detect
   pinMode(2, INPUT); //for coin acceptor pulse detect 
   pinMode(10, OUTPUT); //Slave Select Pin #10 on Uno
+  pinMode(3, OUTPUT); //for coin acceptor relay control 
   
   if (!SD.begin(chipSelect)) {    
       Serial.println("card failed or not present");
@@ -146,7 +146,7 @@ void setup(){
   Serial.println("Parameters set");
   
    #if SET_RTCLOCK
-    // following line sets the RTC to the date & time for Bitcoin Transaction log
+    // following line sets the RTC to the date & time for feathercoin Transaction log
      RTC.adjust(DateTime(__DATE__, __TIME__));
    #endif
 
@@ -218,7 +218,7 @@ void getNextkey(){
          char filename[temp.length()+1];   
          temp.toCharArray(filename, sizeof(filename));
         
-         //check if the bitcoin QR code exist on the SD card
+         //check if the feathercoin QR code exist on the SD card
          if(SD.exists(filename)){
              Serial.print("file exists: ");
              Serial.println(filename);
@@ -230,7 +230,7 @@ void getNextkey(){
              
                //----------------------------------------------------------
                // Depends on Exchange Rate 
-               // May be removed during volitile Bitcoin market periods
+               // May be removed during volitile feathercoin market periods
                //----------------------------------------------------------
              
                printer->println("Value 1 FTC");
@@ -258,6 +258,8 @@ void getNextkey(){
                printer->print(now.minute(), DEC);
 	       printer->print(":");
                printer->print(now.second(), DEC);
+               printer->print(" ");
+               printer->print(filename);
                printer->println(" ");
                printer->println(" ");
                printer->println(" ");
@@ -269,15 +271,15 @@ void getNextkey(){
             if (keyNumber >= MAX_KEYS -1){
               
                 //----------------------------------------------------------
-                // Disable bill acceptor when bitcoins run out 
-                // pull low on Apex 5400 violet wire
+                // Disable coin acceptor when feathercoins run out 
+                // Send pin 3 high, to control relay
                 //----------------------------------------------------------
-              
+               digitalWrite(3, HIGH);
             }  
              Serial.print("file does not exist: ");
              Serial.println(filename);        
         }
-    //increment bitcoin number
+    //increment feathercoin number
     keyNumber++;
     }
 }  
@@ -381,6 +383,8 @@ void printBitmap(char *filename, bool shouldDelete){
     //}
     
   return;
+  
+  
   
 }
 
