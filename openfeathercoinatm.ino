@@ -1,6 +1,6 @@
-//*************************************************************************
+ //*************************************************************************
  OpenFeathercoinATM
- (ver. 1.0.2)
+ (ver. 1.0.3)
  
  OpenFeathercoinATM is the Feathercoin implementation of the OpenBitcoinATM
  Arduino program, adapetd by Stefan Pynappels.
@@ -245,7 +245,19 @@ void getNextkey(){
 
                printer->println("www.feathercoin.com");
                
+             DateTime now =RTC.now();  
                printer->println(" ");
+               printer->print(now.day(), DEC);
+	       printer->print("/");
+               printer->print(now.month(), DEC);
+	       printer->print("/");
+               printer->print(now.year(), DEC);
+               printer->print(" ");
+               printer->print(now.hour(), DEC);
+	       printer->print(":");
+               printer->print(now.minute(), DEC);
+	       printer->print(":");
+               printer->print(now.second(), DEC);
                printer->println(" ");
                printer->println(" ");
                printer->println(" ");
