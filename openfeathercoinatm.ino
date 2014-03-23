@@ -1,4 +1,63 @@
-#include <SoftwareSerial.h>
+//*************************************************************************
+ OpenFeathercoinATM
+ (ver. 1.0.2)
+ 
+ OpenFeathercoinATM is the Feathercoin implementation of the OpenBitcoinATM
+ Arduino program, adapetd by Stefan Pynappels.
+ 
+ Thanks to John Mayo-Smith for the solid base to start from!
+    
+ MIT Licence (MIT)
+ Copyright (c) 1997 - 2014 John Mayo-Smith for Federal Digital Coin Corporation
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+
+  OpenBitcoinATM is the first open-source Bitcoin automated teller machine for
+ experimentation and education. 
+  
+ This application, counts pulses from a Pyramid Technologies Apex 5000
+ series bill acceptor and interfaces with the Adafruit 597 TTL serial Mini Thermal 
+ Receipt Printer.
+
+
+  References
+  -----------
+  Rob Toft: https://github.com/uncle-muddy
+  
+  Stefan Pynappels: https://github.com/spynappels
+  
+  John Mayo-Smith: https://github.com/mayosmith
+  
+  Here's the A2 Micro panel thermal printer --> http://www.adafruit.com/products/597
+  
+  Here's the bill accceptor --> APEX 5400 on eBay http://bit.ly/MpETED
+  
+  Peter Kropf: https://github.com/pkropf/greenbacks
+  
+  Thomas Mayo-Smith:http://www.linkedin.com/pub/thomas-mayo-smith/63/497/a57
+
+
+
+ *************************************************************************/
+ 
+ 
+ #include <SoftwareSerial.h>
  #include <Wire.h>
  #include "RTClib.h"
  #include <SPI.h>
@@ -47,6 +106,8 @@
  
 void setup(){
   Serial.begin(57600); //baud rate for serial monitor
+  Wire.begin();
+  RTC.begin();
   attachInterrupt(0, onPulse, RISING); //interupt for Apex bill acceptor pulse detect
   pinMode(2, INPUT); //for coin acceptor pulse detect 
   pinMode(10, OUTPUT); //Slave Select Pin #10 on Uno
@@ -340,3 +401,4 @@ void updateLog(){
       logfile.println(now.second(), DEC);
       logfile.close();
 }
+
